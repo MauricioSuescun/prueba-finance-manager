@@ -1,3 +1,4 @@
+import React from "react";
 import { withAuth } from "@/lib/withAuth";
 import { useEffect, useState } from "react";
 import { useSession } from "next-auth/react";
