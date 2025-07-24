@@ -1,6 +1,6 @@
-import { getSession } from "next-auth/react";
+import { withAuth } from "@/lib/withAuth";
 
-export default function MovementsPage() {
+function MovementsPage() {
   // Aquí irá la lógica y UI de movimientos
   return (
     <main className="p-8">
@@ -9,3 +9,5 @@ export default function MovementsPage() {
     </main>
   );
 }
+
+export default withAuth(MovementsPage); // Todos los roles pueden acceder

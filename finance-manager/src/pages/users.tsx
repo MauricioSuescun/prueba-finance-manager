@@ -1,6 +1,6 @@
-import { getSession } from "next-auth/react";
+import { withAuth } from "@/lib/withAuth";
 
-export default function UsersPage() {
+function UsersPage() {
   // Aquí irá la lógica y UI de usuarios
   return (
     <main className="p-8">
@@ -9,3 +9,5 @@ export default function UsersPage() {
     </main>
   );
 }
+
+export default withAuth(UsersPage, ["ADMIN"]); // Solo administradores
