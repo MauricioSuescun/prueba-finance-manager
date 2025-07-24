@@ -1,4 +1,3 @@
-
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
@@ -18,7 +17,9 @@ export const authOptions: NextAuthOptions = {
     async signIn({ user }) {
       // Asigna el rol ADMIN automáticamente a nuevos usuarios
       if (user && user.email) {
-        const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+        const dbUser = await prisma.user.findUnique({
+          where: { email: user.email },
+        });
         if (dbUser && !dbUser.role) {
           await prisma.user.update({
             where: { email: user.email },
