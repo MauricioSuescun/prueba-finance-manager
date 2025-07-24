@@ -1,11 +1,12 @@
-import NextAuth from "next-auth";
+
+import NextAuth, { type NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     GitHubProvider({
@@ -14,11 +15,11 @@ export const authOptions = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile }) {
+    async signIn({ user }) {
       // Asigna el rol ADMIN automáticamente a nuevos usuarios
       if (user && user.email) {
-        const existingUser = await prisma.user.findUnique({ where: { email: user.email } });
-        if (!existingUser) {
+        const dbUser = await prisma.user.findUnique({ where: { email: user.email } });
+        if (dbUser && !dbUser.role) {
           await prisma.user.update({
             where: { email: user.email },
             data: { role: "ADMIN" },
@@ -39,6 +40,9 @@ export const authOptions = {
     strategy: "database",
   },
   secret: process.env.NEXTAUTH_SECRET,
+  pages: {
+    signIn: "/auth/signin", // Puedes personalizar la página de login si lo deseas
+  },
 };
 
 export default NextAuth(authOptions);
