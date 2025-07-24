@@ -18,7 +18,12 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
       return res.status(400).json({ error: "Missing fields" });
     }
     const movement = await prisma.movement.create({
-      data: { concept, amount: parseFloat(amount), date: new Date(date), userId },
+      data: {
+        concept,
+        amount: parseFloat(amount),
+        date: new Date(date),
+        userId,
+      },
     });
     return res.status(201).json(movement);
   }

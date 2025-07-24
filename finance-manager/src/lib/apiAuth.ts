@@ -2,7 +2,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/pages/api/auth/[...nextauth]";
 import type { NextApiRequest, NextApiResponse, NextApiHandler } from "next";
 
-export function withApiAuth(handler: NextApiHandler, allowedRoles: string[] = []) {
+export function withApiAuth(
+  handler: NextApiHandler,
+  allowedRoles: string[] = []
+) {
   return async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getServerSession(req, res, authOptions);
     if (!session) {

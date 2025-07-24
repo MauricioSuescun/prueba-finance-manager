@@ -35,12 +35,25 @@ export default function Home() {
             priority
           />
           <nav className="flex flex-col gap-4 items-center mt-8">
-            <a href="/movements" className="bg-blue-600 text-white px-6 py-3 rounded shadow hover:bg-blue-700 font-semibold w-64 text-center">Gestión de Ingresos y Egresos</a>
-            <a href="/users" className="bg-green-600 text-white px-6 py-3 rounded shadow hover:bg-green-700 font-semibold w-64 text-center">Gestión de Usuarios</a>
-            <a href="/reports" className="bg-purple-600 text-white px-6 py-3 rounded shadow hover:bg-purple-700 font-semibold w-64 text-center">Reportes Financieros</a>
+            <a
+              href="/movements"
+              className="bg-blue-600 text-white px-6 py-3 rounded shadow hover:bg-blue-700 font-semibold w-64 text-center"
+            >
+              Gestión de Ingresos y Egresos
+            </a>
+            <a
+              href="/users"
+              className="bg-green-600 text-white px-6 py-3 rounded shadow hover:bg-green-700 font-semibold w-64 text-center"
+            >
+              Gestión de Usuarios
+            </a>
+            <a
+              href="/reports"
+              className="bg-purple-600 text-white px-6 py-3 rounded shadow hover:bg-purple-700 font-semibold w-64 text-center"
+            >
+              Reportes Financieros
+            </a>
           </nav>
-            <li>Save and see your changes instantly.</li>
-          </ol>
 
           <div className={styles.ctas}>
             <a

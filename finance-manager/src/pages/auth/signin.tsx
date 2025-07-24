@@ -1,4 +1,4 @@
-import { getProviders, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 
 export default function SignInPage() {
   // Página personalizada de login
