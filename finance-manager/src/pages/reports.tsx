@@ -24,14 +24,20 @@ function ReportsPage() {
 
   useEffect(() => {
     fetch("/api/reports")
-      .then((res) => res.json())
+      .then(async (res) => {
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err?.error || "Error de permisos o de servidor");
+        }
+        return res.json();
+      })
       .then((data) => {
         setMovements(data.movements);
         setSaldo(data.saldo);
         setLoading(false);
       })
-      .catch(() => {
-        setError("Error al cargar reportes");
+      .catch((e) => {
+        setError(e.message || "Error al cargar reportes");
         setLoading(false);
       });
   }, []);

@@ -44,7 +44,7 @@ function MovementsPage() {
       const res = await fetch("/api/movements", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...data, userEmail: session?.user?.email }),
+        body: JSON.stringify({ ...data, userId: session?.user?.id }),
       });
       if (!res.ok) throw new Error("Error al guardar movimiento");
       const newMovement = await res.json();

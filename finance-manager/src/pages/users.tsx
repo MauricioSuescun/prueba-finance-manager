@@ -19,13 +19,19 @@ function UsersPage() {
 
   useEffect(() => {
     fetch("/api/users")
-      .then((res) => res.json())
+      .then(async (res) => {
+        if (!res.ok) {
+          const err = await res.json().catch(() => ({}));
+          throw new Error(err?.error || "Error de permisos o de servidor");
+        }
+        return res.json();
+      })
       .then((data) => {
         setUsers(data);
         setLoading(false);
       })
-      .catch(() => {
-        setError("Error al cargar usuarios");
+      .catch((e) => {
+        setError(e.message || "Error al cargar usuarios");
         setLoading(false);
       });
   }, []);

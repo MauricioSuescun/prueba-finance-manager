@@ -1,9 +1,7 @@
 import NextAuth, { type NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
+import { prisma } from "@/lib/prisma";
 
 export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
@@ -30,9 +28,11 @@ export const authOptions: NextAuthOptions = {
       return true;
     },
     async session({ session, user }) {
-      // Incluye el rol en la sesión
-      if (session?.user && user?.role) {
-        session.user.role = user.role;
+      // Incluye el id y el rol en la sesión
+      if (session?.user) {
+        const u = user as { id?: string; role?: string };
+        if (u.id) session.user.id = u.id;
+        if (u.role) session.user.role = u.role;
       }
       return session;
     },
