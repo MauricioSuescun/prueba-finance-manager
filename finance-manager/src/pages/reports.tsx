@@ -1,12 +1,25 @@
-
-
 import React, { useState, useEffect, useMemo } from "react";
 import { Bar } from "react-chartjs-2";
-import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from "chart.js";
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+} from "chart.js";
 import Papa from "papaparse";
 import { withAuth } from "../lib/withAuth";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 type Movement = {
   id: string;
@@ -121,7 +134,10 @@ function ReportsPage() {
               }}
             />
           </div>
-          <div className="mb-4 text-lg font-semibold">Saldo actual: <span className="text-blue-700">${saldo.toFixed(2)}</span></div>
+          <div className="mb-4 text-lg font-semibold">
+            Saldo actual:{" "}
+            <span className="text-blue-700">${saldo.toFixed(2)}</span>
+          </div>
         </>
       )}
     </main>
