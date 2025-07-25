@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
 
-// @ts-expect-error Falta declaración de tipos para swagger-ui-react
-const SwaggerUI = dynamic(() => import("swagger-ui-react"), { ssr: false });
+const SwaggerUI = dynamic<any>(() => import("swagger-ui-react"), { ssr: false });
 
 export default function DocsPage() {
   const [swaggerJson, setSwaggerJson] = useState<Record<
