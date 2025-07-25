@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import dynamic from "next/dynamic";
+import type { SwaggerUIProps } from "swagger-ui-react";
 
-const SwaggerUI = dynamic<any>(() => import("swagger-ui-react"), { ssr: false });
+const SwaggerUI = dynamic<SwaggerUIProps>(() => import("swagger-ui-react"), { ssr: false });
 
 export default function DocsPage() {
   const [swaggerJson, setSwaggerJson] = useState<Record<
