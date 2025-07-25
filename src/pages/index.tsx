@@ -1,5 +1,6 @@
 import React from "react";
 import Head from "next/head";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -23,24 +24,24 @@ export default function Home() {
           </p>
         </header>
         <nav className="flex flex-col md:flex-row gap-6 items-center justify-center w-full max-w-xl">
-          <a
+          <Link
             href="/movements"
             className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 rounded-lg shadow-lg font-semibold text-lg transition-colors w-64 text-center"
           >
             Gestión de Ingresos y Egresos
-          </a>
-          <a
+          </Link>
+          <Link
             href="/users"
             className="bg-green-600 hover:bg-green-700 text-white px-8 py-4 rounded-lg shadow-lg font-semibold text-lg transition-colors w-64 text-center"
           >
             Gestión de Usuarios
-          </a>
-          <a
+          </Link>
+          <Link
             href="/reports"
             className="bg-purple-600 hover:bg-purple-700 text-white px-8 py-4 rounded-lg shadow-lg font-semibold text-lg transition-colors w-64 text-center"
           >
             Reportes Financieros
-          </a>
+          </Link>
         </nav>
         <footer className="mt-16 text-gray-500 text-sm text-center">
           © {new Date().getFullYear()} Finance Manager. Todos los derechos
