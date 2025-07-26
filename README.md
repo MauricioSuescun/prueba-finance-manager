@@ -1,40 +1,188 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/pages/api-reference/create-next-app).
+# Finance Manager
 
-## Getting Started
+Sistema de gestión de ingresos y egresos con autenticación OAuth, roles de usuario y generación de reportes.
 
-First, run the development server:
+## Características
+
+- 🔐 Autenticación con GitHub OAuth
+- 👥 Sistema de roles (Usuario/Administrador)
+- 💰 Gestión de ingresos y egresos
+- 📊 Reportes financieros con gráficos
+- 📥 Exportación de datos a CSV
+- 🛡️ Control de acceso basado en roles (RBAC)
+- 📚 Documentación API con Swagger
+
+## Tecnologías
+
+- **Frontend**: Next.js (Pages Router), TypeScript, Tailwind CSS, Shadcn/UI
+- **Backend**: Next.js API Routes
+- **Base de datos**: PostgreSQL (Supabase)
+- **Autenticación**: NextAuth.js con GitHub Provider
+- **ORM**: Prisma
+- **Deploy**: Vercel
+
+## Configuración Local
+
+### 1. Clona el repositorio
+
+```bash
+git clone <tu-repositorio>
+cd finance-manager
+```
+
+### 2. Instala las dependencias
+
+```bash
+npm install
+```
+
+### 3. Configura las variables de entorno
+
+Crea un archivo `.env.local` en la raíz del proyecto:
+
+```env
+# Base de datos Supabase
+DATABASE_URL="postgresql://[usuario]:[password]@[host]:[puerto]/[database]?pgbouncer=true&connection_limit=1"
+DIRECT_URL="postgresql://[usuario]:[password]@[host]:[puerto]/[database]"
+
+# NextAuth
+NEXTAUTH_SECRET="tu_secreto_super_seguro_aqui"
+NEXTAUTH_URL="http://localhost:3000"
+
+# GitHub OAuth
+GITHUB_ID="tu_github_client_id"
+GITHUB_SECRET="tu_github_client_secret"
+```
+
+### 4. Configura la base de datos
+
+```bash
+# Generar el cliente Prisma
+npx prisma generate
+
+# Ejecutar migraciones
+npx prisma db push
+
+# (Opcional) Poblar la base de datos
+npx prisma db seed
+```
+
+### 5. Configura GitHub OAuth
+
+1. Ve a GitHub Settings → Developer settings → OAuth Apps
+2. Crea una nueva aplicación OAuth:
+   - **Application name**: Finance Manager
+   - **Homepage URL**: `http://localhost:3000`
+   - **Authorization callback URL**: `http://localhost:3000/api/auth/callback/github`
+3. Copia el Client ID y Client Secret a tu `.env.local`
+
+### 6. Ejecuta la aplicación
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+La aplicación estará disponible en [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+## Deploy en Vercel
 
-[API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### 1. Configura las variables de entorno en Vercel
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/pages/building-your-application/routing/api-routes) instead of React pages.
+En el panel de Vercel (Settings → Environment Variables), añade:
 
-This project uses [`next/font`](https://nextjs.org/docs/pages/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```env
+# Base de datos
+DATABASE_URL=postgresql://[usuario]:[password]@[host]:[puerto]/[database]?pgbouncer=true&connection_limit=1
+DIRECT_URL=postgresql://[usuario]:[password]@[host]:[puerto]/[database]
 
-## Learn More
+# NextAuth
+NEXTAUTH_SECRET=tu_secreto_super_seguro_aqui
+NEXTAUTH_URL=https://tu-app.vercel.app
 
-To learn more about Next.js, take a look at the following resources:
+# GitHub OAuth
+GITHUB_ID=tu_github_client_id
+GITHUB_SECRET=tu_github_client_secret
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn-pages-router) - an interactive Next.js tutorial.
+### 2. Actualiza la configuración de GitHub OAuth
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+En tu aplicación OAuth de GitHub, actualiza:
+- **Homepage URL**: `https://tu-app.vercel.app`
+- **Authorization callback URL**: `https://tu-app.vercel.app/api/auth/callback/github`
 
-## Deploy on Vercel
+### 3. Deploy
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+# Conecta con Vercel CLI (opcional)
+npm i -g vercel
+vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/pages/building-your-application/deploying) for more details.
+# O simplemente haz push a tu repositorio conectado con Vercel
+git add .
+git commit -m "Deploy configuration"
+git push origin main
+```
+
+## Estructura del Proyecto
+
+```
+src/
+├── components/          # Componentes reutilizables
+├── lib/                # Utilidades y configuraciones
+├── pages/              # Páginas y API routes
+│   ├── api/            # Endpoints de la API
+│   ├── auth/           # Páginas de autenticación
+│   ├── index.tsx       # Página de inicio
+│   ├── movements.tsx   # Gestión de movimientos
+│   ├── users.tsx       # Gestión de usuarios
+│   └── reports.tsx     # Reportes financieros
+├── styles/             # Estilos globales
+└── types/              # Definiciones de TypeScript
+```
+
+## API Endpoints
+
+- `GET /api/docs` - Documentación Swagger
+- `GET/POST /api/movements` - Gestión de movimientos
+- `GET/PUT /api/users` - Gestión de usuarios
+- `GET /api/reports` - Generación de reportes
+
+## Scripts Disponibles
+
+```bash
+npm run dev      # Desarrollo
+npm run build    # Build de producción
+npm run start    # Servidor de producción
+npm run lint     # Linter
+npm test         # Ejecutar pruebas
+```
+
+## Roles y Permisos
+
+- **Usuario**: Acceso a gestión de movimientos
+- **Administrador**: Acceso completo a todas las funcionalidades
+
+*Nota: Todos los nuevos usuarios se registran automáticamente como ADMIN para facilitar las pruebas.*
+
+## Troubleshooting
+
+### Error 404 en Vercel
+
+1. Verifica que las variables de entorno estén configuradas correctamente
+2. Asegúrate de que GitHub OAuth tenga las URLs correctas
+3. Revisa los logs de build en Vercel
+4. Confirma que `npm run start` funcione localmente después de `npm run build`
+
+### Error de Base de Datos
+
+1. Verifica las URLs de conexión a Supabase
+2. Asegúrate de que las migraciones se ejecutaron correctamente
+3. Revisa que la base de datos sea accesible desde Vercel
+
+## Contribución
+
+1. Fork el proyecto
+2. Crea una rama para tu feature
+3. Commit tus cambios
+4. Push a la rama
+5. Abre un Pull Request
