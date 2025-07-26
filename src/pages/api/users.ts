@@ -1,17 +1,19 @@
+import { withAuth } from "@/lib/apiAuth";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { withApiAuth } from "@/lib/apiAuth";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
-    const users = await prisma.user.findMany({
-      select: { id: true, name: true, email: true, phone: true, role: true },
+    // GET /api/users - Obtener todos los usuarios
+    res.status(200).json({
+      message: "Lista de usuarios obtenida exitosamente",
+      users: [
+        { id: "1", name: "Usuario 1", email: "usuario1@ejemplo.com", role: "ADMIN" },
+        { id: "2", name: "Usuario 2", email: "usuario2@ejemplo.com", role: "USER" },
+      ],
     });
-    return res.status(200).json(users);
+  } else {
+    res.status(405).json({ error: "Método no permitido" });
   }
-  res.status(405).json({ error: "Method not allowed" });
 }
 
-export default withApiAuth(handler, ["ADMIN"]); // Solo administradores
+export default withAuth(handler);

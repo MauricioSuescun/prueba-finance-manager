@@ -13,13 +13,11 @@ export default async function handler(
     // Check database connection
     const dbConnected = await testConnection();
     
-    // Check environment variables
+    // Check environment variables for Better Auth
     const requiredEnvVars = [
-      'NEXTAUTH_SECRET',
       'GITHUB_ID',
       'GITHUB_SECRET',
-      'DATABASE_URL',
-      'NEXTAUTH_URL'
+      'DATABASE_URL'
     ];
 
     const missingEnvVars = requiredEnvVars.filter(
@@ -34,12 +32,13 @@ export default async function handler(
         connected: dbConnected,
       },
       auth: {
+        provider: 'better-auth',
         configured: missingEnvVars.length === 0,
         missingEnvVars: missingEnvVars.length > 0 ? missingEnvVars : undefined,
       },
-      nextauth: {
-        url: process.env.NEXTAUTH_URL,
-        secret: process.env.NEXTAUTH_SECRET ? 'configured' : 'missing',
+      github: {
+        clientId: process.env.GITHUB_ID ? 'configured' : 'missing',
+        clientSecret: process.env.GITHUB_SECRET ? 'configured' : 'missing',
       }
     };
 

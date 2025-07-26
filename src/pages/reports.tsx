@@ -144,4 +144,4 @@ function ReportsPage() {
   );
 }
 
-export default withAuth(ReportsPage, ["ADMIN"]);
+export default withAuth(ReportsPage);

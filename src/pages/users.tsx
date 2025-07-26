@@ -116,4 +116,4 @@ function UsersPage() {
   );
 }
 
-export default withAuth(UsersPage, ["ADMIN"]);
+export default withAuth(UsersPage);

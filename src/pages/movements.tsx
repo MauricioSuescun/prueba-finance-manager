@@ -1,7 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import { useSession } from "@/lib/auth-client";
 import { withAuth } from "@/lib/withAuth";
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
 import MovementForm from "@/components/MovementForm";
 
 type Movement = {
@@ -57,7 +56,8 @@ function MovementsPage() {
     }
   };
 
-  const isAdmin = session?.user?.role === "ADMIN";
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const isAdmin = (session?.user as any)?.role === "ADMIN";
 
   return (
     <main className="p-8">

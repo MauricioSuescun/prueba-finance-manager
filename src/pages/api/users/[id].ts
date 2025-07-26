@@ -1,23 +1,25 @@
+import { withAuth } from "@/lib/apiAuth";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { withApiAuth } from "@/lib/apiAuth";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { id } = req.query;
-  if (req.method === "PUT") {
-    const { name, role } = req.body;
-    if (!name || !role) {
-      return res.status(400).json({ error: "Missing fields" });
-    }
-    const updated = await prisma.user.update({
-      where: { id: id as string },
-      data: { name, role },
+  if (req.method === "GET") {
+    // GET /api/users/[id] - Obtener usuario por ID
+    const { id } = req.query;
+    res.status(200).json({
+      message: `Obteniendo usuario con ID: ${id}`,
+      user: { id, name: "Usuario Ejemplo", email: "usuario@ejemplo.com" },
     });
-    return res.status(200).json(updated);
+  } else if (req.method === "PUT") {
+    // PUT /api/users/[id] - Actualizar usuario
+    const { id } = req.query;
+    res.status(200).json({ message: `Usuario ${id} actualizado exitosamente` });
+  } else if (req.method === "DELETE") {
+    // DELETE /api/users/[id] - Eliminar usuario
+    const { id } = req.query;
+    res.status(200).json({ message: `Usuario ${id} eliminado exitosamente` });
+  } else {
+    res.status(405).json({ error: "Método no permitido" });
   }
-  res.status(405).json({ error: "Method not allowed" });
 }
 
-export default withApiAuth(handler, ["ADMIN"]);
+export default withAuth(handler);

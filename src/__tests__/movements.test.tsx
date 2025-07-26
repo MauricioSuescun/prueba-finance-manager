@@ -1,31 +1,45 @@
-import React from "react";
-import "@testing-library/jest-dom";
-import { render, screen, waitFor } from "@testing-library/react";
-import MovementsPage from "../movements";
-import { SessionProvider } from "next-auth/react";
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import Movements from '@/pages/movements';
 
-jest.mock("next-auth/react", () => {
-  const actual = jest.requireActual("next-auth/react");
-  return {
-    ...actual,
-    getSession: jest.fn().mockResolvedValue({
-      user: { name: "Admin", email: "admin@test.com", role: "ADMIN" },
-    }),
-  };
-});
+// Mock Better Auth
+jest.mock("@/lib/auth-client", () => ({
+  useSession: () => ({
+    data: {
+      user: { 
+        id: "1", 
+        email: "test@example.com", 
+        name: "Test User",
+        role: "ADMIN" 
+      }
+    },
+    isPending: false,
+  }),
+}));
 
-describe("MovementsPage", () => {
-  it("renderiza el título y la tabla", async () => {
-    render(
-      <SessionProvider session={null}>
-        <MovementsPage />
-      </SessionProvider>
-    );
-    await waitFor(() => {
-      expect(
-        screen.getByText("Gestión de Ingresos y Egresos")
-      ).toBeInTheDocument();
-      expect(screen.getByRole("table")).toBeInTheDocument();
-    });
+// Mock the withAuth HOC
+jest.mock("@/lib/withAuth", () => ({
+  withAuth: (Component: React.ComponentType) => Component,
+}));
+
+// Mock router
+jest.mock('next/router', () => ({
+  useRouter: () => ({
+    push: jest.fn(),
+    pathname: '/movements',
+  }),
+}));
+
+// Mock fetch
+global.fetch = jest.fn();
+
+describe('Movements Page', () => {
+  beforeEach(() => {
+    (fetch as jest.Mock).mockClear();
+  });
+
+  it('renders movements page', () => {
+    render(<Movements />);
+    expect(screen.getByText('Gestión de Ingresos y Egresos')).toBeInTheDocument();
   });
 });

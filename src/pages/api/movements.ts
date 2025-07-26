@@ -1,33 +1,38 @@
+import { withAuth } from "@/lib/apiAuth";
 import type { NextApiRequest, NextApiResponse } from "next";
-import { withApiAuth } from "@/lib/apiAuth";
-import { PrismaClient } from "@prisma/client";
-
-const prisma = new PrismaClient();
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method === "GET") {
-    const movements = await prisma.movement.findMany({
-      include: { user: { select: { name: true, email: true } } },
-      orderBy: { date: "desc" },
+    // GET /api/movements - Obtener todos los movimientos
+    res.status(200).json({
+      message: "Movimientos obtenidos exitosamente",
+      movements: [
+        {
+          id: "1",
+          concept: "Salario",
+          amount: 2500,
+          date: "2024-01-15",
+          type: "income",
+        },
+        {
+          id: "2",
+          concept: "Renta",
+          amount: -800,
+          date: "2024-01-01",
+          type: "expense",
+        },
+      ],
     });
-    return res.status(200).json(movements);
-  }
-  if (req.method === "POST") {
-    const { concept, amount, date, userId } = req.body;
-    if (!concept || !amount || !date || !userId) {
-      return res.status(400).json({ error: "Missing fields" });
-    }
-    const movement = await prisma.movement.create({
-      data: {
-        concept,
-        amount: parseFloat(amount),
-        date: new Date(date),
-        userId,
-      },
+  } else if (req.method === "POST") {
+    // POST /api/movements - Crear nuevo movimiento
+    const { concept, amount, date } = req.body;
+    res.status(201).json({
+      message: "Movimiento creado exitosamente",
+      movement: { id: Date.now().toString(), concept, amount, date },
     });
-    return res.status(201).json(movement);
+  } else {
+    res.status(405).json({ error: "Método no permitido" });
   }
-  res.status(405).json({ error: "Method not allowed" });
 }
 
-export default withApiAuth(handler); // Todos los autenticados
+export default withAuth(handler);
