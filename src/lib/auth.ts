@@ -27,24 +27,4 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
   },
-  callbacks: {
-    after: [
-      {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        matcher(context: any) {
-          return context.type === "signUp";
-        },
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        handler: async (ctx: any) => {
-          // Assign ADMIN role to new users
-          if (ctx.user?.email) {
-            await prisma.user.update({
-              where: { email: ctx.user.email },
-              data: { role: "ADMIN" },
-            });
-          }
-        },
-      },
-    ],
-  },
 });

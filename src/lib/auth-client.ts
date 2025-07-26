@@ -1,11 +1,7 @@
 import { createAuthClient } from "better-auth/react";
 
 export const authClient = createAuthClient({
-  baseURL: typeof window !== "undefined" 
-    ? window.location.origin 
-    : process.env.VERCEL_URL 
-    ? `https://${process.env.VERCEL_URL}`
-    : "http://localhost:3000",
+  // Better Auth will automatically detect the base URL
 });
 
 export const { signIn, signOut, signUp, useSession } = authClient;
