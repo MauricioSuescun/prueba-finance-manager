@@ -6,6 +6,7 @@ export const auth = betterAuth({
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
+  baseURL: process.env.BETTER_AUTH_URL || process.env.AUTH_URL || process.env.NEXTAUTH_URL,
   socialProviders: {
     github: {
       clientId: process.env.GITHUB_ID!,
@@ -24,4 +25,7 @@ export const auth = betterAuth({
     expiresIn: 60 * 60 * 24 * 7, // 7 days
     updateAge: 60 * 60 * 24, // 1 day
   },
+  trustedOrigins: process.env.NODE_ENV === "production" 
+    ? [process.env.NEXTAUTH_URL || "https://prueba-finance-manager-git-cur-e3b501-mauriciosuescuns-projects.vercel.app"]
+    : ["http://localhost:3000"],
 });
