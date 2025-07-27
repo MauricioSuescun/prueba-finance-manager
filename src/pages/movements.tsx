@@ -23,10 +23,12 @@ function MovementsPage() {
     fetch("/api/movements")
       .then((res) => res.json())
       .then((data) => {
-        setMovements(data);
+        // Fix: API returns {movements: [...]} but we need the array
+        setMovements(data.movements || []);
         setLoading(false);
       })
-      .catch(() => {
+      .catch((error) => {
+        console.error("Error loading movements:", error);
         setError("Error al cargar movimientos");
         setLoading(false);
       });
@@ -46,7 +48,9 @@ function MovementsPage() {
         body: JSON.stringify({ ...data, userId: session?.user?.id }),
       });
       if (!res.ok) throw new Error("Error al guardar movimiento");
-      const newMovement = await res.json();
+      const responseData = await res.json();
+      // Fix: API returns {movement: {...}} but we need the movement object
+      const newMovement = responseData.movement || responseData;
       setMovements([newMovement, ...movements]);
       setShowModal(false);
     } catch {
@@ -87,18 +91,26 @@ function MovementsPage() {
               </tr>
             </thead>
             <tbody>
-              {movements.map((m) => (
-                <tr key={m.id} className="even:bg-gray-50">
-                  <td className="px-4 py-2 border">{m.concept}</td>
-                  <td className="px-4 py-2 border">${m.amount.toFixed(2)}</td>
-                  <td className="px-4 py-2 border">
-                    {new Date(m.date).toLocaleDateString()}
-                  </td>
-                  <td className="px-4 py-2 border">
-                    {m.user?.name || m.user?.email}
+              {Array.isArray(movements) && movements.length > 0 ? (
+                movements.map((m) => (
+                  <tr key={m.id} className="even:bg-gray-50">
+                    <td className="px-4 py-2 border">{m.concept}</td>
+                    <td className="px-4 py-2 border">${m.amount.toFixed(2)}</td>
+                    <td className="px-4 py-2 border">
+                      {new Date(m.date).toLocaleDateString()}
+                    </td>
+                    <td className="px-4 py-2 border">
+                      {m.user?.name || m.user?.email}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="px-4 py-8 border text-center text-gray-500">
+                    No hay movimientos registrados. {isAdmin && "¡Crea el primero!"}
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>

@@ -1,37 +1,79 @@
 import { withAuth } from "@/lib/apiAuth";
+import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method === "GET") {
-    // GET /api/movements - Obtener todos los movimientos
-    res.status(200).json({
-      message: "Movimientos obtenidos exitosamente",
-      movements: [
-        {
-          id: "1",
-          concept: "Salario",
-          amount: 2500,
-          date: "2024-01-15",
-          type: "income",
+  try {
+    if (req.method === "GET") {
+      // GET /api/movements - Obtener todos los movimientos desde DB
+      console.log("📋 Getting movements from database...");
+      
+      const movements = await prisma.movement.findMany({
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
         },
-        {
-          id: "2",
-          concept: "Renta",
-          amount: -800,
-          date: "2024-01-01",
-          type: "expense",
+        orderBy: {
+          createdAt: 'desc',
         },
-      ],
+      });
+
+      console.log(`✅ Found ${movements.length} movements`);
+      
+      res.status(200).json({
+        message: "Movimientos obtenidos exitosamente",
+        movements: movements,
+      });
+      
+    } else if (req.method === "POST") {
+      // POST /api/movements - Crear nuevo movimiento en DB
+      const { concept, amount, date, userId } = req.body;
+      
+      if (!concept || !amount || !date || !userId) {
+        return res.status(400).json({ 
+          error: "Faltan campos requeridos: concept, amount, date, userId" 
+        });
+      }
+
+      console.log("💰 Creating new movement:", { concept, amount, date, userId });
+      
+      const newMovement = await prisma.movement.create({
+        data: {
+          concept,
+          amount: parseFloat(amount),
+          date: new Date(date),
+          userId,
+        },
+        include: {
+          user: {
+            select: {
+              name: true,
+              email: true,
+            },
+          },
+        },
+      });
+
+      console.log("✅ Movement created:", newMovement);
+      
+      res.status(201).json({
+        message: "Movimiento creado exitosamente",
+        movement: newMovement,
+      });
+      
+    } else {
+      res.status(405).json({ error: "Método no permitido" });
+    }
+  } catch (error) {
+    console.error("❌ Error in movements API:", error);
+    res.status(500).json({ 
+      error: "Error interno del servidor",
+      details: error instanceof Error ? error.message : "Unknown error"
     });
-  } else if (req.method === "POST") {
-    // POST /api/movements - Crear nuevo movimiento
-    const { concept, amount, date } = req.body;
-    res.status(201).json({
-      message: "Movimiento creado exitosamente",
-      movement: { id: Date.now().toString(), concept, amount, date },
-    });
-  } else {
-    res.status(405).json({ error: "Método no permitido" });
   }
 }
 
