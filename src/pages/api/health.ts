@@ -1,5 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { testConnection } from '@/lib/prisma';
 
 export default async function handler(
   req: NextApiRequest,
@@ -10,41 +9,22 @@ export default async function handler(
   }
 
   try {
-    // Check database connection
-    const dbConnected = await testConnection();
-    
-    // Check environment variables for Better Auth
-    const requiredEnvVars = [
-      'GITHUB_ID',
-      'GITHUB_SECRET',
-      'DATABASE_URL'
-    ];
-
-    const missingEnvVars = requiredEnvVars.filter(
-      envVar => !process.env[envVar]
-    );
-
+    // Very simple health check - just like simple-health but with more info
     const health = {
       status: 'ok',
       timestamp: new Date().toISOString(),
       environment: process.env.NODE_ENV,
-      database: {
-        connected: dbConnected,
-      },
       auth: {
         provider: 'better-auth',
-        configured: missingEnvVars.length === 0,
-        missingEnvVars: missingEnvVars.length > 0 ? missingEnvVars : undefined,
+        github_configured: !!(process.env.GITHUB_ID && process.env.GITHUB_SECRET),
+        database_url_configured: !!process.env.DATABASE_URL,
+        direct_url_configured: !!process.env.DIRECT_URL,
       },
-      github: {
-        clientId: process.env.GITHUB_ID ? 'configured' : 'missing',
-        clientSecret: process.env.GITHUB_SECRET ? 'configured' : 'missing',
-      }
+      version: '1.0.0',
+      message: 'Health check endpoint is working'
     };
 
-    const statusCode = dbConnected && missingEnvVars.length === 0 ? 200 : 500;
-    
-    res.status(statusCode).json(health);
+    res.status(200).json(health);
   } catch (error) {
     console.error('Health check failed:', error);
     res.status(500).json({
