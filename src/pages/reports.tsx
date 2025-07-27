@@ -45,8 +45,9 @@ function ReportsPage() {
         return res.json();
       })
       .then((data) => {
-        setMovements(data.movements);
-        setSaldo(data.saldo);
+        // Fix: API returns {movements: [...], saldo: number} but might be undefined
+        setMovements(data.movements || []);
+        setSaldo(data.saldo || 0);
         setLoading(false);
       })
       .catch((e) => {
@@ -58,15 +59,18 @@ function ReportsPage() {
   // Agrupar movimientos por mes y tipo (ingreso/egreso)
   const chartData = useMemo(() => {
     const grouped: Record<string, { ingresos: number; egresos: number }> = {};
-    movements.forEach((m) => {
+    // Fix: Add safety check for movements array
+    if (Array.isArray(movements)) {
+      movements.forEach((m) => {
       const month = new Date(m.date).toLocaleString("default", {
         year: "numeric",
         month: "short",
       });
       if (!grouped[month]) grouped[month] = { ingresos: 0, egresos: 0 };
-      if (m.amount >= 0) grouped[month].ingresos += m.amount;
-      else grouped[month].egresos += Math.abs(m.amount);
-    });
+        if (m.amount >= 0) grouped[month].ingresos += m.amount;
+        else grouped[month].egresos += Math.abs(m.amount);
+      });
+    }
     const labels = Object.keys(grouped).sort();
     return {
       labels,
@@ -86,7 +90,7 @@ function ReportsPage() {
   }, [movements]);
 
   const handleDownloadCSV = () => {
-    if (!movements.length) return;
+    if (!Array.isArray(movements) || !movements.length) return;
     const csv = Papa.unparse(
       movements.map((m) => ({
         Concepto: m.concept,
@@ -111,9 +115,10 @@ function ReportsPage() {
       <div className="flex items-center justify-between mb-4">
         <h1 className="text-2xl font-bold">Reportes Financieros</h1>
         <button
-          className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700"
+          className="bg-green-600 text-white px-4 py-2 rounded shadow hover:bg-green-700 disabled:bg-gray-400 disabled:cursor-not-allowed"
           onClick={handleDownloadCSV}
-          disabled={!movements.length}
+          disabled={!Array.isArray(movements) || !movements.length}
+          title={!Array.isArray(movements) || !movements.length ? "No hay movimientos para exportar" : "Descargar reporte en formato CSV"}
         >
           Descargar CSV
         </button>
@@ -144,4 +149,4 @@ function ReportsPage() {
   );
 }
 
-export default withAuth(ReportsPage, ["ADMIN"]);
+export default withAuth(ReportsPage);

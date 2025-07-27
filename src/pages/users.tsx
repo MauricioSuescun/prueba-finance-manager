@@ -27,7 +27,8 @@ function UsersPage() {
         return res.json();
       })
       .then((data) => {
-        setUsers(data);
+        // Fix: API returns {users: [...]} but we need the array
+        setUsers(data.users || []);
         setLoading(false);
       })
       .catch((e) => {
@@ -52,7 +53,9 @@ function UsersPage() {
         body: JSON.stringify({ name: data.name, role: data.role }),
       });
       if (!res.ok) throw new Error("Error al actualizar usuario");
-      const updated = await res.json();
+      const responseData = await res.json();
+      // Fix: API returns {user: {...}} but we need the user object
+      const updated = responseData.user || responseData;
       setUsers(
         users.map((u) => (u.id === updated.id ? { ...u, ...updated } : u))
       );
@@ -84,23 +87,31 @@ function UsersPage() {
               </tr>
             </thead>
             <tbody>
-              {users.map((u) => (
-                <tr key={u.id} className="even:bg-gray-50">
-                  <td className="px-4 py-2 border">{u.name || "-"}</td>
-                  <td className="px-4 py-2 border">{u.email}</td>
-                  <td className="px-4 py-2 border">{u.phone || "-"}</td>
-                  <td className="px-4 py-2 border">{u.role}</td>
-                  <td className="px-4 py-2 border">
-                    <button
-                      className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
-                      onClick={() => handleEdit(u)}
-                      disabled={submitting}
-                    >
-                      Editar
-                    </button>
+              {Array.isArray(users) && users.length > 0 ? (
+                users.map((u) => (
+                  <tr key={u.id} className="even:bg-gray-50">
+                    <td className="px-4 py-2 border">{u.name || "-"}</td>
+                    <td className="px-4 py-2 border">{u.email}</td>
+                    <td className="px-4 py-2 border">{u.phone || "-"}</td>
+                    <td className="px-4 py-2 border">{u.role}</td>
+                    <td className="px-4 py-2 border">
+                      <button
+                        className="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600"
+                        onClick={() => handleEdit(u)}
+                        disabled={submitting}
+                      >
+                        Editar
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={5} className="px-4 py-8 border text-center text-gray-500">
+                    No hay usuarios registrados.
                   </td>
                 </tr>
-              ))}
+              )}
             </tbody>
           </table>
         </div>
@@ -116,4 +127,4 @@ function UsersPage() {
   );
 }
 
-export default withAuth(UsersPage, ["ADMIN"]);
+export default withAuth(UsersPage);

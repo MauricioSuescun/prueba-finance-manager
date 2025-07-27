@@ -1,35 +1,35 @@
 import React from "react";
-import { getSession } from "next-auth/react";
+import { useSession } from "@/lib/auth-client";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
-export function withAuth<T extends object>(
-  Component: React.ComponentType<T>,
-  allowedRoles: string[] = []
-) {
+export function withAuth<T extends object>(Component: React.ComponentType<T>) {
   return function AuthenticatedComponent(props: T) {
+    const { data: session, isPending } = useSession();
     const router = useRouter();
-    const [loading, setLoading] = useState(true);
-    const [authorized, setAuthorized] = useState(false);
 
     useEffect(() => {
-      getSession().then((session) => {
-        if (!session) {
-          router.replace("/auth/signin");
-        } else if (
-          allowedRoles.length > 0 &&
-          (!session.user?.role || !allowedRoles.includes(session.user.role))
-        ) {
-          router.replace("/");
-        } else {
-          setAuthorized(true);
-        }
-        setLoading(false);
-      });
-    }, [router]);
+      if (!isPending && !session) {
+        router.push("/");
+      }
+    }, [session, isPending, router]);
 
-    if (loading) return <div className="p-8">Cargando...</div>;
-    if (!authorized) return null;
+    if (isPending) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-xl">Cargando...</div>
+        </div>
+      );
+    }
+
+    if (!session) {
+      return (
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-xl">Redirigiendo...</div>
+        </div>
+      );
+    }
+
     return <Component {...props} />;
   };
 }
