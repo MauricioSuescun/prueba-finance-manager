@@ -2,10 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "npx prisma generate && npm run build",
   "outputDirectory": ".next",
-  "public": false,
-  "functions": {
-    "src/pages/api/**/*.ts": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  "public": false
 }
