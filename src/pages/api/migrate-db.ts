@@ -4,15 +4,37 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
 ) {
-  // Only allow in production and only via POST for security
+  // Handle GET for debugging
+  if (req.method === 'GET') {
+    return res.status(200).json({
+      status: 'migrate_endpoint_ready',
+      timestamp: new Date().toISOString(),
+      message: 'Migration endpoint is accessible',
+      instructions: {
+        method: 'POST',
+        header: 'Authorization: Bearer migrate-now',
+        description: 'Use POST method with authorization header to execute migration'
+      }
+    });
+  }
+
+  // Only allow POST for actual migration
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return res.status(405).json({ 
+      error: 'Method not allowed', 
+      allowed_methods: ['GET', 'POST'],
+      current_method: req.method 
+    });
   }
 
   // Basic security check
   const authHeader = req.headers.authorization;
   if (!authHeader || authHeader !== `Bearer ${process.env.MIGRATION_SECRET || 'migrate-now'}`) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return res.status(401).json({ 
+      error: 'Unauthorized',
+      expected_header: 'Authorization: Bearer migrate-now',
+      received_header: authHeader ? 'Present but incorrect' : 'Missing'
+    });
   }
 
   try {
