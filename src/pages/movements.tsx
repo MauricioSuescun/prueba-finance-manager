@@ -61,21 +61,50 @@ function MovementsPage() {
   };
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const isAdmin = (session?.user as any)?.role === "ADMIN";
+  const userRole = (session?.user as any)?.role;
+  
+  // For now, all authenticated users are treated as ADMIN since that's the default role
+  const isAdmin = !!session?.user && (userRole === "ADMIN" || !userRole);
+
+  // Debug: let's see what we actually have in session
+  console.log("🔍 [MOVEMENTS DEBUG]", {
+    session: !!session,
+    user: !!session?.user,
+    userEmail: session?.user?.email,
+    userName: session?.user?.name,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    role: (session?.user as any)?.role,
+    isAdmin: isAdmin
+  });
 
   return (
     <main className="p-8">
-      <div className="flex items-center justify-between mb-4">
-        <h1 className="text-2xl font-bold">Gestión de Ingresos y Egresos</h1>
-        {isAdmin && (
+            <div className="mb-4">
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Gestión de Ingresos y Egresos</h1>
+          
+          {/* Show button for everyone for now, with admin check inside */}
           <button
-            className="bg-blue-600 text-white px-4 py-2 rounded shadow hover:bg-blue-700"
-            onClick={() => setShowModal(true)}
-            disabled={submitting}
+            className={`px-4 py-2 rounded shadow ${
+              isAdmin 
+                ? "bg-blue-600 text-white hover:bg-blue-700" 
+                : "bg-gray-400 text-gray-700 cursor-not-allowed"
+            }`}
+            onClick={() => isAdmin && setShowModal(true)}
+            disabled={submitting || !isAdmin}
+            title={!isAdmin ? "Solo administradores pueden crear movimientos" : "Crear nuevo movimiento"}
           >
-            Nuevo
+            Nuevo {!isAdmin && "(Solo Admin)"}
           </button>
-        )}
+        </div>
+        
+        {/* Debug info */}
+        <div className="text-sm text-gray-500 mt-2">
+          Usuario: {session?.user?.name || session?.user?.email || "No autenticado"} | 
+          {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+          Rol: {(session?.user as any)?.role || "ADMIN (default)"} | 
+          Admin: {isAdmin ? "Sí" : "No"}
+        </div>
       </div>
       {loading && <div>Cargando movimientos...</div>}
       {error && <div className="text-red-600">{error}</div>}
