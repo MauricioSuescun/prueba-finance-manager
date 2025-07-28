@@ -2,31 +2,33 @@
 
 Sistema de gestión de ingresos y egresos con autenticación OAuth, roles de usuario y generación de reportes.
 
-## Características
+## 🎯 Características
 
-- 🔐 Autenticación con GitHub OAuth
-- 👥 Sistema de roles (Usuario/Administrador)
-- 💰 Gestión de ingresos y egresos
-- 📊 Reportes financieros con gráficos
-- 📥 Exportación de datos a CSV
-- 🛡️ Control de acceso basado en roles (RBAC)
-- 📚 Documentación API con Swagger
+- 🔐 **Autenticación**: GitHub OAuth con Better Auth
+- 👥 **Sistema de roles**: Usuario/Administrador con RBAC
+- 💰 **Gestión financiera**: Crear y administrar ingresos y egresos
+- 📊 **Reportes visuales**: Gráficos interactivos con Chart.js
+- 📥 **Exportación**: Descarga de datos en formato CSV
+- 🗄️ **Base de datos real**: PostgreSQL con Prisma ORM
+- 📱 **Responsive**: Interfaz moderna con Tailwind CSS + Shadcn/UI
+- 🚀 **Deploy**: Optimizado para Vercel
 
-## Tecnologías
+## 🛠️ Tecnologías
 
-- **Frontend**: Next.js (Pages Router), TypeScript, Tailwind CSS, Shadcn/UI
-- **Backend**: Next.js API Routes
+- **Frontend**: Next.js 15+ (Pages Router), TypeScript, Tailwind CSS, Shadcn/UI
+- **Backend**: Next.js API Routes con TypeScript
 - **Base de datos**: PostgreSQL (Supabase)
-- **Autenticación**: NextAuth.js con GitHub Provider
-- **ORM**: Prisma
+- **Autenticación**: Better Auth con GitHub Provider
+- **ORM**: Prisma v6+ con Prisma Client
+- **Gráficos**: Chart.js + React Chart.js 2
 - **Deploy**: Vercel
 
-## Configuración Local
+## 🚀 Configuración Local
 
 ### 1. Clona el repositorio
 
 ```bash
-git clone <tu-repositorio>
+git clone https://github.com/MauricioSuescun/prueba-finance-manager.git
 cd finance-manager
 ```
 
@@ -45,9 +47,9 @@ Crea un archivo `.env.local` en la raíz del proyecto:
 DATABASE_URL="postgresql://[usuario]:[password]@[host]:[puerto]/[database]?pgbouncer=true&connection_limit=1"
 DIRECT_URL="postgresql://[usuario]:[password]@[host]:[puerto]/[database]"
 
-# NextAuth
-NEXTAUTH_SECRET="tu_secreto_super_seguro_aqui"
-NEXTAUTH_URL="http://localhost:3000"
+# Better Auth
+BETTER_AUTH_URL="http://localhost:3000"
+AUTH_SECRET="tu_secreto_super_seguro_aqui_32_caracteres_minimo"
 
 # GitHub OAuth
 GITHUB_ID="tu_github_client_id"
@@ -60,11 +62,8 @@ GITHUB_SECRET="tu_github_client_secret"
 # Generar el cliente Prisma
 npx prisma generate
 
-# Ejecutar migraciones
+# Crear las tablas en la base de datos
 npx prisma db push
-
-# (Opcional) Poblar la base de datos
-npx prisma db seed
 ```
 
 ### 5. Configura GitHub OAuth
@@ -84,7 +83,7 @@ npm run dev
 
 La aplicación estará disponible en [http://localhost:3000](http://localhost:3000)
 
-## Deploy en Vercel
+## 🌐 Deploy en Vercel
 
 ### 1. Configura las variables de entorno en Vercel
 
@@ -95,9 +94,9 @@ En el panel de Vercel (Settings → Environment Variables), añade:
 DATABASE_URL=postgresql://[usuario]:[password]@[host]:[puerto]/[database]?pgbouncer=true&connection_limit=1
 DIRECT_URL=postgresql://[usuario]:[password]@[host]:[puerto]/[database]
 
-# NextAuth
-NEXTAUTH_SECRET=tu_secreto_super_seguro_aqui
-NEXTAUTH_URL=https://tu-app.vercel.app
+# Better Auth
+BETTER_AUTH_URL=https://tu-app.vercel.app
+AUTH_SECRET=tu_secreto_super_seguro_aqui_32_caracteres_minimo
 
 # GitHub OAuth
 GITHUB_ID=tu_github_client_id
@@ -110,79 +109,174 @@ En tu aplicación OAuth de GitHub, actualiza:
 - **Homepage URL**: `https://tu-app.vercel.app`
 - **Authorization callback URL**: `https://tu-app.vercel.app/api/auth/callback/github`
 
-### 3. Deploy
+### 3. Deploy y migración inicial
 
 ```bash
-# Conecta con Vercel CLI (opcional)
-npm i -g vercel
-vercel
-
-# O simplemente haz push a tu repositorio conectado con Vercel
+# Deploy a Vercel
 git add .
-git commit -m "Deploy configuration"
+git commit -m "Deploy to production"
 git push origin main
 ```
 
-## Estructura del Proyecto
 
 ```
 src/
 ├── components/          # Componentes reutilizables
-├── lib/                # Utilidades y configuraciones
+│   ├── MovementForm.tsx # Formulario de movimientos
+│   └── UserEditForm.tsx # Formulario de edición de usuarios
+├── lib/                # Configuraciones y utilidades
+│   ├── auth.ts         # Configuración Better Auth
+│   ├── auth-client.ts  # Cliente Better Auth para frontend
+│   ├── prisma.ts       # Cliente Prisma
+│   ├── apiAuth.ts      # Middleware de autenticación para APIs
+│   └── withAuth.tsx    # HOC para proteger rutas
 ├── pages/              # Páginas y API routes
 │   ├── api/            # Endpoints de la API
-│   ├── auth/           # Páginas de autenticación
-│   ├── index.tsx       # Página de inicio
-│   ├── movements.tsx   # Gestión de movimientos
-│   ├── users.tsx       # Gestión de usuarios
-│   └── reports.tsx     # Reportes financieros
+│   │   ├── auth/       # Endpoints Better Auth
+│   │   ├── movements.ts # CRUD movimientos
+│   │   ├── users/      # CRUD usuarios
+│   │   ├── reports.ts  # Generación de reportes
+│   │   └── full-migration.ts # Migración de BD
+│   ├── index.tsx       # Página de inicio con navegación
+│   ├── movements.tsx   # Gestión de movimientos financieros
+│   ├── users.tsx       # Administración de usuarios
+│   └── reports.tsx     # Reportes y gráficos
 ├── styles/             # Estilos globales
-└── types/              # Definiciones de TypeScript
+└── prisma/             # Esquema de base de datos
+    └── schema.prisma   # Definición de modelos
 ```
 
-## API Endpoints
+## 🔌 API Endpoints
 
-- `GET /api/docs` - Documentación Swagger
-- `GET/POST /api/movements` - Gestión de movimientos
-- `GET/PUT /api/users` - Gestión de usuarios
-- `GET /api/reports` - Generación de reportes
+### Autenticación (Better Auth)
+- `POST /api/auth/sign-in/github` - Iniciar sesión con GitHub
+- `POST /api/auth/sign-out` - Cerrar sesión
+- `GET /api/auth/session` - Obtener sesión actual
 
-## Scripts Disponibles
+### Movimientos
+- `GET /api/movements` - Listar movimientos
+- `POST /api/movements` - Crear movimiento
+
+### Usuarios
+- `GET /api/users` - Listar usuarios
+- `GET /api/users/[id]` - Obtener usuario específico
+- `PUT /api/users/[id]` - Actualizar usuario
+- `DELETE /api/users/[id]` - Eliminar usuario
+
+### Reportes
+- `GET /api/reports` - Generar reporte financiero con gráficos
+
+### Utilidades
+- `GET /api/health` - Health check de la aplicación
+- `POST /api/full-migration` - Migración de base de datos (requiere auth)
+
+## 🎮 Scripts Disponibles
 
 ```bash
-npm run dev      # Desarrollo
-npm run build    # Build de producción
+npm run dev      # Servidor de desarrollo
+npm run build    # Build de producción (incluye prisma generate)
 npm run start    # Servidor de producción
-npm run lint     # Linter
-npm test         # Ejecutar pruebas
+npm run lint     # ESLint + TypeScript check
+npm test         # Ejecutar pruebas unitarias
 ```
 
-## Roles y Permisos
+## 👥 Roles y Permisos
 
-- **Usuario**: Acceso a gestión de movimientos
-- **Administrador**: Acceso completo a todas las funcionalidades
+### Usuario (USER)
+- ✅ Ver sus propios movimientos
+- ✅ Crear nuevos movimientos
+- ✅ Ver reportes
 
-*Nota: Todos los nuevos usuarios se registran automáticamente como ADMIN para facilitar las pruebas.*
+### Administrador (ADMIN)
+- ✅ **Acceso completo** a todas las funcionalidades
+- ✅ Gestionar usuarios (editar roles, información)
+- ✅ Ver todos los movimientos del sistema
+- ✅ Generar reportes completos
 
-## Troubleshooting
+> **Nota**: Los nuevos usuarios se registran automáticamente como **ADMIN** para facilitar las pruebas y configuración inicial.
 
-### Error 404 en Vercel
+## 🐛 Troubleshooting
 
-1. Verifica que las variables de entorno estén configuradas correctamente
-2. Asegúrate de que GitHub OAuth tenga las URLs correctas
-3. Revisa los logs de build en Vercel
-4. Confirma que `npm run start` funcione localmente después de `npm run build`
+### Error: "Better Auth Error: internal_server_error"
 
-### Error de Base de Datos
+**Causa**: Tablas de base de datos faltantes.
 
-1. Verifica las URLs de conexión a Supabase
-2. Asegúrate de que las migraciones se ejecutaron correctamente
-3. Revisa que la base de datos sea accesible desde Vercel
+**Solución**:
+```bash
+curl -X POST https://tu-app.vercel.app/api/full-migration \
+  -H "Authorization: Bearer migrate-now"
+```
 
-## Contribución
+### Error 404 en Vercel después del deploy
+
+**Posibles causas**:
+1. Variables de entorno mal configuradas
+2. GitHub OAuth URLs incorrectas
+3. Falta archivo `vercel.json`
+
+**Soluciones**:
+1. Verificar todas las variables de entorno en Vercel
+2. Actualizar URLs en GitHub OAuth App
+3. El proyecto incluye configuración optimizada para Vercel
+
+### Error de conexión a base de datos
+
+**Verificar**:
+1. `DATABASE_URL` y `DIRECT_URL` correctas
+2. Base de datos Supabase accesible
+3. Migración ejecutada: `/api/full-migration`
+
+### Login con GitHub no funciona
+
+**Verificar**:
+1. `GITHUB_ID` y `GITHUB_SECRET` correctos
+2. URLs en GitHub OAuth App actualizadas
+3. `BETTER_AUTH_URL` apuntando a la URL correcta
+
+## 📊 Funcionalidades Destacadas
+
+### 🏠 **Home Page**
+- Navegación intuitiva a todas las secciones
+- Información de sesión del usuario
+- Login/logout con GitHub
+
+### 💰 **Gestión de Movimientos**
+- Crear ingresos y egresos
+- Validación de formularios
+- Lista de movimientos con información del usuario
+- Interfaz responsive
+
+### 👥 **Administración de Usuarios**
+- Lista de usuarios registrados
+- Edición de nombres y roles
+- Información completa (email, fecha de registro)
+
+### 📈 **Reportes Financieros**
+- Gráficos de barras (ingresos vs egresos)
+- Agrupación por meses
+- Cálculo automático de saldo
+- Exportación a CSV
+- Visualización con Chart.js
+
+## 🚀 Tecnologías Avanzadas Implementadas
+
+- **Better Auth**: Sistema de autenticación moderno y seguro
+- **Prisma ORM**: Gestión de base de datos con type-safety
+- **TypeScript**: Desarrollo con tipado estático
+- **Chart.js**: Visualización de datos interactiva
+- **Tailwind CSS + Shadcn/UI**: Sistema de diseño moderno
+- **Vercel**: Deploy optimizado con Edge Functions
+
+## 📝 Licencia
+
+MIT License - ver [LICENSE](LICENSE) para más detalles.
+
+## 🤝 Contribución
 
 1. Fork el proyecto
-2. Crea una rama para tu feature
-3. Commit tus cambios
-4. Push a la rama
+2. Crea una rama para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. Commit tus cambios (`git commit -m 'Agregar nueva funcionalidad'`)
+4. Push a la rama (`git push origin feature/nueva-funcionalidad`)
 5. Abre un Pull Request
+
+---
