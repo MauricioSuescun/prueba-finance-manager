@@ -44,15 +44,36 @@ export function withAdminAuth(handler: NextApiHandler): NextApiHandler {
       const session = await getServerSession(req);
       
       if (!session) {
+        console.log("❌ No session found in admin middleware");
         return res.status(401).json({ error: "No autorizado" });
       }
 
-      // Check if user has admin role
+      console.log("🔍 Admin middleware - Session user:", {
+        id: session.user?.id,
+        email: session.user?.email,
+        name: session.user?.name,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        role: (session.user as any)?.role,
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        allUserProps: Object.keys(session.user as any || {})
+      });
+
+      // Check if user has admin role - multiple ways to check
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const userRole = (session.user as any)?.role;
-      if (userRole !== "ADMIN") {
-        return res.status(403).json({ error: "Acceso denegado - Solo administradores" });
+      const isAdmin = userRole === "ADMIN" || userRole === "admin";
+      
+      console.log("🔍 Admin check:", { userRole, isAdmin });
+
+      if (!isAdmin) {
+        console.log("❌ Access denied - User role:", userRole);
+        return res.status(403).json({ 
+          error: "Acceso denegado - Solo administradores",
+          debug: { userRole, isAdmin }
+        });
       }
+
+      console.log("✅ Admin access granted for user:", session.user?.email);
 
       // Add session to request object
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
