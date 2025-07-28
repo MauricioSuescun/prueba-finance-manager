@@ -2,6 +2,7 @@ import React from "react";
 import Head from "next/head";
 import Link from "next/link";
 import { useSession, signIn, signOut } from "@/lib/auth-client";
+import Navigation from "@/components/Navigation";
 
 export default function Home() {
   const { data: session, isPending } = useSession();
@@ -42,7 +43,10 @@ export default function Home() {
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-purple-100">
+      <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 to-purple-100">
+        {/* Navigation */}
+        <Navigation />
+        
         {/* Auth Section */}
         <div className="absolute top-4 right-4">
           {isPending ? (
@@ -76,14 +80,15 @@ export default function Home() {
           )}
         </div>
 
-        <header className="mb-10 text-center">
-          <h1 className="text-4xl md:text-5xl font-extrabold text-blue-900 mb-2 drop-shadow">
-            Finance Manager
-          </h1>
-          <p className="text-lg md:text-xl text-gray-700 font-medium">
-            Gestiona tus finanzas de manera simple, segura y eficiente
-          </p>
-        </header>
+        <div className="flex-1 flex flex-col items-center justify-center">
+          <header className="mb-10 text-center">
+            <h1 className="text-4xl md:text-5xl font-extrabold text-blue-900 mb-2 drop-shadow">
+              Finance Manager
+            </h1>
+            <p className="text-lg md:text-xl text-gray-700 font-medium">
+              Gestiona tus finanzas de manera simple, segura y eficiente
+            </p>
+          </header>
 
         {/* Navigation Menu - Always visible */}
         <nav className="flex flex-col md:flex-row gap-6 items-center justify-center w-full max-w-xl">
@@ -127,6 +132,8 @@ export default function Home() {
             </button>
           </div>
         )}
+
+        </div>
 
         <footer className="mt-16 text-gray-500 text-sm text-center">
           © {new Date().getFullYear()} Finance Manager. Todos los derechos

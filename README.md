@@ -5,13 +5,16 @@ Sistema de gestión de ingresos y egresos con autenticación OAuth, roles de usu
 ## 🎯 Características
 
 - 🔐 **Autenticación**: GitHub OAuth con Better Auth
-- 👥 **Sistema de roles**: Usuario/Administrador con RBAC
+- 👥 **Sistema de roles**: Usuario/Administrador con RBAC completo
 - 💰 **Gestión financiera**: Crear y administrar ingresos y egresos
 - 📊 **Reportes visuales**: Gráficos interactivos con Chart.js
 - 📥 **Exportación**: Descarga de datos en formato CSV
 - 🗄️ **Base de datos real**: PostgreSQL con Prisma ORM
 - 📱 **Responsive**: Interfaz moderna con Tailwind CSS + Shadcn/UI
 - 🚀 **Deploy**: Optimizado para Vercel
+- 📚 **Documentación API**: OpenAPI/Swagger completa
+- 🧪 **Pruebas unitarias**: Cobertura de componentes y páginas
+- 🔒 **Seguridad**: Middleware de autenticación y autorización
 
 ## 🛠️ Tecnologías
 

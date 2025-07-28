@@ -1,4 +1,4 @@
-import { withAuth } from "@/lib/apiAuth";
+import { withAdminAuth } from "@/lib/apiAuth";
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
 
@@ -101,4 +101,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withAdminAuth(handler);

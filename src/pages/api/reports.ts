@@ -1,6 +1,84 @@
-import { withAuth } from "@/lib/apiAuth";
+import { withAdminAuth } from "@/lib/apiAuth";
 import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse } from "next";
+
+/**
+ * @swagger
+ * /api/reports:
+ *   get:
+ *     summary: Generar reporte financiero completo
+ *     description: Retorna movimientos, saldo actual y estadísticas financieras (solo para administradores)
+ *     tags: [Reports]
+ *     security:
+ *       - session: []
+ *     responses:
+ *       200:
+ *         description: Reporte generado exitosamente
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                   example: "Reporte generado exitosamente"
+ *                 movements:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: string
+ *                         example: "clx1234567890"
+ *                       concept:
+ *                         type: string
+ *                         example: "Salario enero"
+ *                       amount:
+ *                         type: number
+ *                         example: 2500.00
+ *                       date:
+ *                         type: string
+ *                         format: date-time
+ *                         example: "2024-01-15T00:00:00.000Z"
+ *                       user:
+ *                         type: object
+ *                         properties:
+ *                           name:
+ *                             type: string
+ *                             example: "Juan Pérez"
+ *                           email:
+ *                             type: string
+ *                             example: "juan@example.com"
+ *                 saldo:
+ *                   type: number
+ *                   description: Saldo actual (suma de todos los movimientos)
+ *                   example: 1500.00
+ *                 report:
+ *                   type: object
+ *                   properties:
+ *                     totalIncome:
+ *                       type: number
+ *                       description: Total de ingresos
+ *                       example: 5000.00
+ *                     totalExpenses:
+ *                       type: number
+ *                       description: Total de egresos
+ *                       example: 3500.00
+ *                     balance:
+ *                       type: number
+ *                       description: Saldo actual
+ *                       example: 1500.00
+ *                     period:
+ *                       type: string
+ *                       description: Período del reporte
+ *                       example: "Todos los movimientos"
+ *       401:
+ *         description: No autorizado
+ *       403:
+ *         description: Acceso denegado - Solo administradores
+ *       500:
+ *         description: Error interno del servidor
+ */
 
 async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -63,4 +141,4 @@ async function handler(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-export default withAuth(handler);
+export default withAdminAuth(handler);
