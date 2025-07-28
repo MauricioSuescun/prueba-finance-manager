@@ -1,4 +1,5 @@
 import { auth } from "@/lib/auth";
+import { prisma } from "@/lib/prisma";
 import type { NextApiRequest, NextApiResponse, NextApiHandler } from "next";
 
 export async function getServerSession(req: NextApiRequest) {
@@ -58,12 +59,16 @@ export function withAdminAuth(handler: NextApiHandler): NextApiHandler {
         allUserProps: Object.keys(session.user as any || {})
       });
 
-      // Check if user has admin role - multiple ways to check
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const userRole = (session.user as any)?.role;
+      // Get user role from database since it's not in session
+      const user = await prisma.user.findUnique({
+        where: { id: session.user.id },
+        select: { role: true }
+      });
+
+      const userRole = user?.role;
       const isAdmin = userRole === "ADMIN" || userRole === "admin";
       
-      console.log("🔍 Admin check:", { userRole, isAdmin });
+      console.log("🔍 Admin check:", { userRole, isAdmin, userId: session.user.id });
 
       if (!isAdmin) {
         console.log("❌ Access denied - User role:", userRole);
