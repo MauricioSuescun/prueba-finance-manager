@@ -3,7 +3,7 @@ import { prismaAdapter } from "better-auth/adapters/prisma";
 import { prisma } from "./prisma";
 
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "https://prueba-finance-manager.vercel.app" || "https://prueba-finance-manager-git-fea-2e3f52-mauriciosuescuns-projects.vercel.app/",
+  baseURL: process.env.BETTER_AUTH_URL || process.env.NEXTAUTH_URL || "https://prueba-finance-manager.vercel.app" || "https://prueba-finance-manager-git-fea-2e3f52-mauriciosuescuns-projects.vercel.app",
   database: prismaAdapter(prisma, {
     provider: "postgresql",
   }),
