@@ -41,8 +41,12 @@ export default async function handler(
       // Test 6: Try to access the auth handler directly
       logs.push('🛠️ Testing auth handler...');
       try {
-        const handler = auth.handler;
-        logs.push('✅ Auth handler accessible');
+        // Check if auth handler is accessible
+        if (typeof auth.handler === 'function') {
+          logs.push('✅ Auth handler accessible');
+        } else {
+          logs.push('❌ Auth handler not accessible');
+        }
         
         // Try to get available routes
         logs.push('📚 Available auth routes should include:');
