@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { X, User, Shield, UserCheck } from "lucide-react";
+import { X, User, Shield } from "lucide-react";
 
 interface UserEditFormProps {
   user: { id: string; name: string | null; role: string };

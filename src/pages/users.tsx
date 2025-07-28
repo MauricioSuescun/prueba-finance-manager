@@ -13,10 +13,8 @@ import {
   Filter,
   Mail,
   Phone,
-  Calendar,
   Shield,
-  Edit,
-  MoreHorizontal
+  Edit
 } from "lucide-react";
 
 type User = {
@@ -32,7 +30,6 @@ function UsersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [editUser, setEditUser] = useState<User | null>(null);
-  const [submitting, setSubmitting] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -61,7 +58,6 @@ function UsersPage() {
     name: string;
     role: string;
   }) => {
-    setSubmitting(true);
     setError("");
     try {
       const res = await fetch(`/api/users/${data.id}`, {
@@ -78,8 +74,6 @@ function UsersPage() {
       setEditUser(null);
     } catch {
       setError("Error al actualizar usuario");
-    } finally {
-      setSubmitting(false);
     }
   };
 
