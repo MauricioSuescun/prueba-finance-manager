@@ -63,7 +63,7 @@ export default async function handler(
     // Test 7: Better Auth import test
     try {
       logs.push('🔐 Testing Better Auth import...');
-      const { betterAuth } = await import('better-auth');
+      await import('better-auth');
       logs.push('✅ Better Auth imported successfully');
     } catch (authError) {
       logs.push(`❌ Better Auth import error: ${authError}`);

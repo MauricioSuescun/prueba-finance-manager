@@ -17,7 +17,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 
 interface LayoutProps {
@@ -218,4 +217,4 @@ export default function Layout({ children }: LayoutProps) {
       </div>
     </div>
   );
-} 
+}

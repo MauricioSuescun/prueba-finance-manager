@@ -27,8 +27,12 @@ export default async function handler(
       
       // Test 3: Try to access auth handler
       logs.push('🔧 Testing auth handler...');
-      const handler = auth.handler;
-      logs.push('✅ Auth handler accessible');
+      // Check if auth handler is accessible
+      if (typeof auth.handler === 'function') {
+        logs.push('✅ Auth handler accessible');
+      } else {
+        logs.push('❌ Auth handler not accessible');
+      }
       
       // Test 4: Check current URL
       const protocol = req.headers['x-forwarded-proto'] || 'http';

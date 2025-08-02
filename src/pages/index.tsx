@@ -9,7 +9,6 @@ import {
   DollarSign, 
   TrendingUp, 
   TrendingDown, 
-  Users, 
   FileText,
   ArrowUpRight,
   ArrowDownRight,
@@ -19,22 +18,24 @@ import {
   BarChart3
 } from "lucide-react";
 
+type Movement = {
+  id: string;
+  concept: string;
+  amount: number;
+  date: string;
+  user: { name: string; email: string };
+};
+
 type DashboardStats = {
   totalMovements: number;
   totalIncome: number;
   totalExpenses: number;
   balance: number;
-  recentMovements: Array<{
-    id: string;
-    concept: string;
-    amount: number;
-    date: string;
-    user: { name: string; email: string };
-  }>;
+  recentMovements: Movement[];
 };
 
 export default function Home() {
-  const { data: session, isPending } = useSession();
+  const { data: session } = useSession();
   const [stats, setStats] = useState<DashboardStats>({
     totalMovements: 0,
     totalIncome: 0,
@@ -49,13 +50,13 @@ export default function Home() {
       fetch("/api/reports")
         .then((res) => res.json())
         .then((data) => {
-          const movements = data.movements || [];
+          const movements: Movement[] = data.movements || [];
           const totalIncome = movements
-            .filter((m: any) => m.amount > 0)
-            .reduce((sum: number, m: any) => sum + m.amount, 0);
+            .filter((m: Movement) => m.amount > 0)
+            .reduce((sum: number, m: Movement) => sum + m.amount, 0);
           const totalExpenses = movements
-            .filter((m: any) => m.amount < 0)
-            .reduce((sum: number, m: any) => sum + Math.abs(m.amount), 0);
+            .filter((m: Movement) => m.amount < 0)
+            .reduce((sum: number, m: Movement) => sum + Math.abs(m.amount), 0);
           
           setStats({
             totalMovements: movements.length,

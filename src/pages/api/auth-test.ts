@@ -8,7 +8,8 @@ export default async function handler(
     // Test if Better Auth can be imported without errors
     const { betterAuth } = await import("better-auth");
     
-    const testAuth = betterAuth({
+    // Test if Better Auth can be initialized
+    betterAuth({
       database: {
         provider: "postgresql",
         url: process.env.DATABASE_URL || "test",
