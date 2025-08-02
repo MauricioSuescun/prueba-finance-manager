@@ -17,6 +17,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 import { useState } from "react";
 
 interface LayoutProps {
@@ -98,7 +99,7 @@ export default function Layout({ children }: LayoutProps) {
               <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-indigo-600 rounded-lg flex items-center justify-center">
                 <span className="text-white font-bold text-sm">F</span>
               </div>
-              <span className="text-xl font-bold text-gray-900">Finance Manager</span>
+              <span className="text-xl font-bold text-blue-900">Finance Manager</span>
             </div>
             <Button
               variant="ghost"
