@@ -14,20 +14,17 @@ import { withAuth } from "../lib/withAuth";
 import Layout from "@/components/Layout";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { 
   BarChart3, 
   TrendingUp, 
   TrendingDown, 
   DollarSign, 
   Download,
-  Calendar,
   Activity,
   PieChart,
   FileText,
   ArrowUpRight,
-  ArrowDownRight,
-  RefreshCw
+  ArrowDownRight
 } from "lucide-react";
 
 ChartJS.register(
@@ -51,7 +48,6 @@ function ReportsPage() {
   const [movements, setMovements] = useState<Movement[]>([]);
   const [saldo, setSaldo] = useState(0);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
   const [downloading, setDownloading] = useState(false);
 
   useEffect(() => {
@@ -68,8 +64,7 @@ function ReportsPage() {
         setSaldo(data.saldo || 0);
         setLoading(false);
       })
-      .catch((e) => {
-        setError(e.message || "Error al cargar reportes");
+      .catch(() => {
         setLoading(false);
       });
   }, []);
@@ -121,7 +116,7 @@ function ReportsPage() {
         text: 'Movimientos por Mes',
         font: {
           size: 16,
-          weight: 'bold'
+          weight: 'bold' as const
         }
       },
     },
@@ -129,7 +124,8 @@ function ReportsPage() {
       y: {
         beginAtZero: true,
         ticks: {
-          callback: function(value: any) {
+          callback: function(tickValue: string | number) {
+            const value = typeof tickValue === 'string' ? parseFloat(tickValue) : tickValue;
             return '$' + value.toLocaleString();
           }
         }
